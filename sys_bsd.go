@@ -45,6 +45,10 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 		i.Options = append(i.Options, WindowScale(sti.Pad_cgo_0[0]>>4))
 		i.PeerOptions = append(i.PeerOptions, WindowScale(sti.Pad_cgo_0[0]&0x0f))
 	}
+	if sti.Options&sysTCPI_OPT_SACK != 0 {
+		i.Options = append(i.Options, SACKPermitted(true))
+		i.PeerOptions = append(i.PeerOptions, SACKPermitted(true))
+	}
 	if sti.Options&sysTCPI_OPT_TIMESTAMPS != 0 {
 		i.Options = append(i.Options, Timestamps(true))
 		i.PeerOptions = append(i.PeerOptions, Timestamps(true))
