@@ -4,23 +4,9 @@
 
 package tcpinfo
 
-import (
-	"encoding/binary"
-	"unsafe"
-
-	"github.com/mikioh/tcpopt"
-)
-
-var nativeEndian binary.ByteOrder
+import "github.com/mikioh/tcpopt"
 
 func init() {
-	i := uint32(1)
-	b := (*[4]byte)(unsafe.Pointer(&i))
-	if b[0] == 1 {
-		nativeEndian = binary.LittleEndian
-	} else {
-		nativeEndian = binary.BigEndian
-	}
 	for _, o := range options {
 		if o.name <= 0 || o.parseFn == nil {
 			continue
