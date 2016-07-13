@@ -56,6 +56,9 @@ type SysInfo struct {
 var sysStates = [12]State{Unknown, Established, SynSent, SynReceived, FinWait1, FinWait2, TimeWait, Closed, CloseWait, LastAck, Listen, Closing}
 
 func parseInfo(b []byte) (tcpopt.Option, error) {
+	if len(b) < sizeofTCPInfo {
+		return nil, errBufferTooShort
+	}
 	sti := (*sysTCPInfo)(unsafe.Pointer(&b[0]))
 	i := &Info{State: sysStates[sti.State]}
 	if sti.Options&sysTCPI_OPT_WSCALE != 0 {
@@ -129,12 +132,18 @@ func (di *DCTCPInfo) Algorithm() string { return "dctcp" }
 
 func parseCCAlgorithmInfo(name string, b []byte) (CCAlgorithmInfo, error) {
 	if strings.HasPrefix(name, "dctcp") {
+		if len(b) < sizeofTCPDCTCPInfo {
+			return nil, errBufferTooShort
+		}
 		sdi := (*sysTCPDCTCPInfo)(unsafe.Pointer(&b[0]))
 		di := &DCTCPInfo{Alpha: uint(sdi.Alpha)}
 		if sdi.Enabled != 0 {
 			di.Enabled = true
 		}
 		return di, nil
+	}
+	if len(b) < sizeofTCPVegasInfo {
+		return nil, errBufferTooShort
 	}
 	svi := (*sysTCPVegasInfo)(unsafe.Pointer(&b[0]))
 	vi := &VegasInfo{

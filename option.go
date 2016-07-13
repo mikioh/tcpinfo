@@ -13,7 +13,8 @@ import (
 )
 
 var (
-	errOpNoSupport = errors.New("operation not supported")
+	errOpNoSupport    = errors.New("operation not supported")
+	errBufferTooShort = errors.New("buffer too short")
 
 	_ json.Marshaler = &Info{}
 	_ tcpopt.Option  = &Info{}

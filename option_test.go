@@ -50,3 +50,14 @@ func TestOption(t *testing.T) {
 		}
 	}
 }
+
+func TestParseBufferOverrun(t *testing.T) {
+	for _, o := range []tcpopt.Option{
+		&tcpinfo.Info{},
+		&tcpinfo.CCInfo{},
+		tcpinfo.CCAlgorithm("vegas"),
+	} {
+		var b [3]byte
+		tcpopt.Parse(o.Level(), o.Name(), b[:])
+	}
+}

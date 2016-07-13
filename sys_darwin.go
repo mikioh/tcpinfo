@@ -31,6 +31,9 @@ type SysInfo struct {
 var sysStates = [11]State{Closed, Listen, SynSent, SynReceived, Established, CloseWait, FinWait1, Closing, LastAck, FinWait2, TimeWait}
 
 func parseInfo(b []byte) (tcpopt.Option, error) {
+	if len(b) < sizeofTCPConnInfo {
+		return nil, errBufferTooShort
+	}
 	sti := (*sysTCPConnInfo)(unsafe.Pointer(&b[0]))
 	i := &Info{State: sysStates[sti.State]}
 	if sti.Options&sysTCPCI_OPT_WSCALE != 0 {
