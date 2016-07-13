@@ -17,7 +17,7 @@ const (
 var optionKinds = map[OptionKind]string{
 	KindMaxSegSize:    "mss",
 	KindWindowScale:   "wscale",
-	KindSACKPermitted: "sack perm",
+	KindSACKPermitted: "sack",
 	KindTimestamps:    "tmstamps",
 }
 
