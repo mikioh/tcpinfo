@@ -10,14 +10,14 @@ type OptionKind int
 const (
 	KindMaxSegSize    OptionKind = 2
 	KindWindowScale   OptionKind = 3
-	KindSackPermitted OptionKind = 4
+	KindSACKPermitted OptionKind = 4
 	KindTimestamps    OptionKind = 8
 )
 
 var optionKinds = map[OptionKind]string{
 	KindMaxSegSize:    "mss",
 	KindWindowScale:   "wscale",
-	KindSackPermitted: "sack perm",
+	KindSACKPermitted: "sack perm",
 	KindTimestamps:    "tmstamps",
 }
 
@@ -46,12 +46,12 @@ type WindowScale int
 // Kind returns an option kind field.
 func (ws WindowScale) Kind() OptionKind { return KindWindowScale }
 
-// A SackPermitted reports whether a selective acknowledgment
+// A SACKPermitted reports whether a selective acknowledgment
 // permitted option is enabled.
-type SackPermitted bool
+type SACKPermitted bool
 
 // Kind returns an option kind field.
-func (sp SackPermitted) Kind() OptionKind { return KindSackPermitted }
+func (sp SACKPermitted) Kind() OptionKind { return KindSACKPermitted }
 
 // A Timestamps reports whether a timestamps option is enabled.
 type Timestamps bool
