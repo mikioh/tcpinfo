@@ -6,12 +6,13 @@ package tcpinfo
 const (
 	sysTCP_CONNECTION_INFO = 0x106
 
-	sysTCPCI_OPT_TIMESTAMPS           = 0x1
-	sysTCPCI_OPT_SACK                 = 0x2
-	sysTCPCI_OPT_WSCALE               = 0x4
-	sysTCPCI_OPT_ECN                  = 0x8
-	sysTCPCI_FLAG_LOSSRECOVERY        = 0x1
-	sysTCPCI_FLAG_REORDERING_DETECTED = 0x2
+	sysTCPCI_OPT_TIMESTAMPS = 0x1
+	sysTCPCI_OPT_SACK       = 0x2
+	sysTCPCI_OPT_WSCALE     = 0x4
+	sysTCPCI_OPT_ECN        = 0x8
+
+	SysFlagLossRecovery       SysFlags = 0x1
+	SysFlagReorderingDetected SysFlags = 0x2
 
 	sizeofTCPConnInfo = 0x68
 )
