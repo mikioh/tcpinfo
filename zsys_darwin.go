@@ -14,10 +14,10 @@ const (
 	SysFlagLossRecovery       SysFlags = 0x1
 	SysFlagReorderingDetected SysFlags = 0x2
 
-	sizeofTCPConnInfo = 0x68
+	sizeofTCPConnectionInfo = 0x68
 )
 
-type sysTCPConnInfo struct {
+type sysTCPConnectionInfo struct {
 	State             uint8
 	Snd_wscale        uint8
 	Rcv_wscale        uint8
