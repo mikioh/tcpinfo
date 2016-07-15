@@ -25,8 +25,8 @@ func (i *Info) Marshal() ([]byte, error) { return (*[sizeofTCPInfo]byte)(unsafe.
 
 // A SysInfo represents platform-specific information.
 type SysInfo struct {
-	SenderWindowBytes uint `json:"snd_wnd_bytes"`   // advertised sender window in bytes
-	SenderWindowSegs  uint `json:"snd_wnd_segs"`    // advertised sender window in # of segments
+	SenderWindowBytes uint `json:"snd_wnd_bytes"`   // advertised sender window in bytes [FreeBSD]
+	SenderWindowSegs  uint `json:"snd_wnd_segs"`    // advertised sender window in # of segments [NetBSD]
 	NextEgressSeq     uint `json:"egress_seq"`      // next egress seq. number
 	NextIngressSeq    uint `json:"ingress_seq"`     // next ingress seq. number
 	RetransSegs       uint `json:"retrans_segs"`    // # of retransmit segments sent

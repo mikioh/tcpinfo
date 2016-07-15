@@ -91,8 +91,8 @@ type FlowControl struct {
 type CongestionControl struct {
 	SenderSSThreshold   uint `json:"snd_ssthresh"`   // slow start threshold for sender in bytes or # of segments
 	ReceiverSSThreshold uint `json:"rcv_ssthresh"`   // slow start threshold for receiver in bytes [Linux only]
-	SenderWindowBytes   uint `json:"snd_cwnd_bytes"` // congestion window for sender in bytes
-	SenderWindowSegs    uint `json:"snd_cwnd_segs"`  // congestion window for sender in # of segments
+	SenderWindowBytes   uint `json:"snd_cwnd_bytes"` // congestion window for sender in bytes [Darwin and FreeBSD]
+	SenderWindowSegs    uint `json:"snd_cwnd_segs"`  // congestion window for sender in # of segments [Linux and NetBSD]
 }
 
 // Level implements the Level method of tcpopt.Option interface.
