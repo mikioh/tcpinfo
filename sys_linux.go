@@ -42,27 +42,29 @@ func (st CAState) String() string {
 
 // A SysInfo represents platform-specific information.
 type SysInfo struct {
-	PathMTU           uint          `json:"path_mtu"`           // path maximum transmission unit
-	AdvertisedMSS     MaxSegSize    `json:"adv_mss"`            // advertised maximum segment size
-	CAState           CAState       `json:"ca_state"`           // state of congestion avoidance
-	KeepAliveProbes   uint          `json:"ka_probes"`          // # of keep alive probes sent
-	UnackedSegs       uint          `json:"unacked_segs"`       // # of unack'd segments
-	SackedSegs        uint          `json:"sacked_segs"`        // # of sack'd segments
-	LostSegs          uint          `json:"lost_segs"`          // # of lost segments
-	RetransSegs       uint          `json:"retrans_segs"`       // # of retransmitting segments in transmission queue
-	ForwardAckSegs    uint          `json:"fack_segs"`          // # of forward ack segments in transmission queue
-	ReorderedSegs     uint          `json:"reord_segs"`         // # of reordered segments
-	ReceiverRTT       time.Duration `json:"rcv_rtt"`            // current RTT for receiver
-	TotalRetransSegs  uint          `json:"total_retrans_segs"` // # of retransmitted segments
-	PacingRate        uint64        `json:"pacing_rate"`        // pacing rate
-	ThruBytesAcked    uint64        `json:"thru_bytes_acked"`   // # of bytes for which cumulative acknowledgments have been received
-	ThruBytesReceived uint64        `json:"thru_bytes_rcvd"`    // # of bytes for which cumulative acknowledgments have been sent
-	SegsOut           uint          `json:"segs_out"`           // # of segments sent
-	SegsIn            uint          `json:"segs_in"`            // # of segments received
-	NotSentBytes      uint          `json:"not_sent_bytes"`     // # of bytes not sent yet
-	MinRTT            time.Duration `json:"min_rtt"`            // current measured minimum RTT; zero means not available
-	DataSegsOut       uint          `json:"data_segs_out"`      // # of segments sent containing a positive length data segment
-	DataSegsIn        uint          `json:"data_segs_in"`       // # of segments received containing a positive length data segment
+	PathMTU                 uint          `json:"path_mtu"`           // path maximum transmission unit
+	AdvertisedMSS           MaxSegSize    `json:"adv_mss"`            // advertised maximum segment size
+	CAState                 CAState       `json:"ca_state"`           // state of congestion avoidance
+	Retransmissions         uint          `json:"rexmits"`            // # of retranmissions on timeout invoked
+	Backoffs                uint          `json:"backoffs"`           // # of times retransmission backoff timer invoked
+	WindowOrKeepAliveProbes uint          `json:"wnd_ka_probes"`      // # of window or keep alive probes sent
+	UnackedSegs             uint          `json:"unacked_segs"`       // # of unack'd segments
+	SackedSegs              uint          `json:"sacked_segs"`        // # of sack'd segments
+	LostSegs                uint          `json:"lost_segs"`          // # of lost segments
+	RetransSegs             uint          `json:"retrans_segs"`       // # of retransmitting segments in transmission queue
+	ForwardAckSegs          uint          `json:"fack_segs"`          // # of forward ack segments in transmission queue
+	ReorderedSegs           uint          `json:"reord_segs"`         // # of reordered segments allowed
+	ReceiverRTT             time.Duration `json:"rcv_rtt"`            // current RTT for receiver
+	TotalRetransSegs        uint          `json:"total_retrans_segs"` // # of retransmitted segments
+	PacingRate              uint64        `json:"pacing_rate"`        // pacing rate
+	ThruBytesAcked          uint64        `json:"thru_bytes_acked"`   // # of bytes for which cumulative acknowledgments have been received
+	ThruBytesReceived       uint64        `json:"thru_bytes_rcvd"`    // # of bytes for which cumulative acknowledgments have been sent
+	SegsOut                 uint          `json:"segs_out"`           // # of segments sent
+	SegsIn                  uint          `json:"segs_in"`            // # of segments received
+	NotSentBytes            uint          `json:"not_sent_bytes"`     // # of bytes not sent yet
+	MinRTT                  time.Duration `json:"min_rtt"`            // current measured minimum RTT; zero means not available
+	DataSegsOut             uint          `json:"data_segs_out"`      // # of segments sent containing a positive length data segment
+	DataSegsIn              uint          `json:"data_segs_in"`       // # of segments received containing a positive length data segment
 }
 
 var sysStates = [12]State{Unknown, Established, SynSent, SynReceived, FinWait1, FinWait2, TimeWait, Closed, CloseWait, LastAck, Listen, Closing}
@@ -103,27 +105,29 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 		SenderWindow:        uint(sti.Snd_cwnd),
 	}
 	i.Sys = &SysInfo{
-		PathMTU:           uint(sti.Pmtu),
-		AdvertisedMSS:     MaxSegSize(sti.Advmss),
-		CAState:           CAState(sti.Ca_state),
-		KeepAliveProbes:   uint(sti.Probes),
-		UnackedSegs:       uint(sti.Unacked),
-		SackedSegs:        uint(sti.Sacked),
-		LostSegs:          uint(sti.Lost),
-		RetransSegs:       uint(sti.Retrans),
-		ForwardAckSegs:    uint(sti.Fackets),
-		ReorderedSegs:     uint(sti.Reordering),
-		ReceiverRTT:       time.Duration(sti.Rcv_rtt) * time.Microsecond,
-		TotalRetransSegs:  uint(sti.Total_retrans),
-		PacingRate:        uint64(sti.Pacing_rate),
-		ThruBytesAcked:    uint64(sti.Bytes_acked),
-		ThruBytesReceived: uint64(sti.Bytes_received),
-		SegsIn:            uint(sti.Segs_in),
-		SegsOut:           uint(sti.Segs_out),
-		NotSentBytes:      uint(sti.Notsent_bytes),
-		MinRTT:            time.Duration(sti.Min_rtt) * time.Microsecond,
-		DataSegsIn:        uint(sti.Data_segs_in),
-		DataSegsOut:       uint(sti.Data_segs_out),
+		PathMTU:                 uint(sti.Pmtu),
+		AdvertisedMSS:           MaxSegSize(sti.Advmss),
+		CAState:                 CAState(sti.Ca_state),
+		Retransmissions:         uint(sti.Retransmits),
+		Backoffs:                uint(sti.Backoff),
+		WindowOrKeepAliveProbes: uint(sti.Probes),
+		UnackedSegs:             uint(sti.Unacked),
+		SackedSegs:              uint(sti.Sacked),
+		LostSegs:                uint(sti.Lost),
+		RetransSegs:             uint(sti.Retrans),
+		ForwardAckSegs:          uint(sti.Fackets),
+		ReorderedSegs:           uint(sti.Reordering),
+		ReceiverRTT:             time.Duration(sti.Rcv_rtt) * time.Microsecond,
+		TotalRetransSegs:        uint(sti.Total_retrans),
+		PacingRate:              uint64(sti.Pacing_rate),
+		ThruBytesAcked:          uint64(sti.Bytes_acked),
+		ThruBytesReceived:       uint64(sti.Bytes_received),
+		SegsIn:                  uint(sti.Segs_in),
+		SegsOut:                 uint(sti.Segs_out),
+		NotSentBytes:            uint(sti.Notsent_bytes),
+		MinRTT:                  time.Duration(sti.Min_rtt) * time.Microsecond,
+		DataSegsIn:              uint(sti.Data_segs_in),
+		DataSegsOut:             uint(sti.Data_segs_out),
 	}
 	return i, nil
 }
