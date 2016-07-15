@@ -45,16 +45,16 @@ func (f SysFlags) String() string {
 
 // A SysInfo represents platform-specific information.
 type SysInfo struct {
-	Flags                   SysFlags      `json:"flags"`           // flags
-	SenderWindowBytes       uint          `json:"snd_wnd_bytes"`   // advertised sender window in bytes
-	SenderInUseBytes        uint          `json:"snd_inuse_bytes"` // # of bytes in send buffer including inflight data
-	SRTT                    time.Duration `json:"srtt"`            // smoothed round-trip time
-	SegsSent                uint64        `json:"segs_sent"`       // # of segements send
-	BytesSent               uint64        `json:"bytes_sent"`      // # of bytes sent
-	RetransBytes            uint64        `json:"retrans_bytes"`   // # of retransmitted bytes
-	SegsReceived            uint64        `json:"segs_rcvd"`       // # of segments received
-	BytesReceived           uint64        `json:"bytes_rcvd"`      // # of bytes received
-	OutOfOrderBytesReceived uint64        `json:"ooo_bytes_rcvd"`  // # of our-of-order bytes received
+	Flags                   SysFlags      `json:"flags"`          // flags
+	SenderWindow            uint          `json:"snd_wnd"`        // advertised sender window in bytes
+	SenderInUse             uint          `json:"snd_inuse"`      // bytes in send buffer including inflight data
+	SRTT                    time.Duration `json:"srtt"`           // smoothed round-trip time
+	SegsSent                uint64        `json:"segs_sent"`      // # of segements send
+	BytesSent               uint64        `json:"bytes_sent"`     // # of bytes sent
+	RetransBytes            uint64        `json:"retrans_bytes"`  // # of retransmitted bytes
+	SegsReceived            uint64        `json:"segs_rcvd"`      // # of segments received
+	BytesReceived           uint64        `json:"bytes_rcvd"`     // # of bytes received
+	OutOfOrderBytesReceived uint64        `json:"ooo_bytes_rcvd"` // # of our-of-order bytes received
 }
 
 var sysStates = [11]State{Closed, Listen, SynSent, SynReceived, Established, CloseWait, FinWait1, Closing, LastAck, FinWait2, TimeWait}
@@ -91,8 +91,8 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	}
 	i.Sys = &SysInfo{
 		Flags:                   SysFlags(sti.Flags),
-		SenderWindowBytes:       uint(sti.Snd_wnd),
-		SenderInUseBytes:        uint(sti.Snd_sbbytes),
+		SenderWindow:            uint(sti.Snd_wnd),
+		SenderInUse:             uint(sti.Snd_sbbytes),
 		SRTT:                    time.Duration(sti.Srtt) * time.Millisecond,
 		SegsSent:                uint64(sti.Txpackets),
 		BytesSent:               uint64(sti.Txbytes),
