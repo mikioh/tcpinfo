@@ -7,6 +7,7 @@
 package tcpinfo
 
 import (
+	"runtime"
 	"time"
 	"unsafe"
 
@@ -24,7 +25,8 @@ func (i *Info) Marshal() ([]byte, error) { return (*[sizeofTCPInfo]byte)(unsafe.
 
 // A SysInfo represents platform-specific information.
 type SysInfo struct {
-	SenderWindow      uint `json:"snd_wnd"`         // advertised sender window in bytes or # of segments
+	SenderWindowBytes uint `json:"snd_wnd_bytes"`   // advertised sender window in bytes
+	SenderWindowSegs  uint `json:"snd_wnd_segs"`    // advertised sender window in # of segments
 	NextEgressSeq     uint `json:"egress_seq"`      // next egress seq. number
 	NextIngressSeq    uint `json:"ingress_seq"`     // next ingress seq. number
 	RetransSegs       uint `json:"retrans_segs"`    // # of retransmit segments sent
@@ -68,10 +70,8 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	i.CongestionControl = &CongestionControl{
 		SenderSSThreshold:   uint(sti.Snd_ssthresh),
 		ReceiverSSThreshold: uint(sti.X__tcpi_rcv_ssthresh),
-		SenderWindow:        uint(sti.Snd_cwnd),
 	}
 	i.Sys = &SysInfo{
-		SenderWindow:      uint(sti.Snd_wnd),
 		NextEgressSeq:     uint(sti.Snd_nxt),
 		NextIngressSeq:    uint(sti.Rcv_nxt),
 		RetransSegs:       uint(sti.Snd_rexmitpack),
@@ -80,6 +80,14 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	}
 	if sti.Options&sysTCPI_OPT_TOE != 0 {
 		i.Sys.Offloading = true
+	}
+	switch runtime.GOOS {
+	case "freebsd":
+		i.CongestionControl.SenderWindowBytes = uint(sti.Snd_cwnd)
+		i.Sys.SenderWindowBytes = uint(sti.Snd_wnd)
+	case "netbsd":
+		i.CongestionControl.SenderWindowSegs = uint(sti.Snd_cwnd)
+		i.Sys.SenderWindowSegs = uint(sti.Snd_wnd)
 	}
 	return i, nil
 }

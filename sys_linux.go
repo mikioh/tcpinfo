@@ -102,7 +102,7 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	i.CongestionControl = &CongestionControl{
 		SenderSSThreshold:   uint(sti.Snd_ssthresh),
 		ReceiverSSThreshold: uint(sti.Rcv_ssthresh),
-		SenderWindow:        uint(sti.Snd_cwnd),
+		SenderWindowSegs:    uint(sti.Snd_cwnd),
 	}
 	i.Sys = &SysInfo{
 		PathMTU:                 uint(sti.Pmtu),

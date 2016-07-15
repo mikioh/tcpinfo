@@ -87,7 +87,7 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	}
 	i.CongestionControl = &CongestionControl{
 		SenderSSThreshold: uint(sti.Snd_ssthresh),
-		SenderWindow:      uint(sti.Snd_cwnd),
+		SenderWindowBytes: uint(sti.Snd_cwnd),
 	}
 	i.Sys = &SysInfo{
 		Flags:                   SysFlags(sti.Flags),
