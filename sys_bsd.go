@@ -15,9 +15,7 @@ import (
 )
 
 var options = [soMax]option{
-	soInfo:   {ianaProtocolTCP, sysTCP_INFO, parseInfo},
-	soCCInfo: {ianaProtocolTCP, -1, nil},
-	soCCAlgo: {ianaProtocolTCP, -1, nil},
+	soInfo: {ianaProtocolTCP, sysTCP_INFO, parseInfo},
 }
 
 // Marshal implements the Marshal method of tcpopt.Option interface.

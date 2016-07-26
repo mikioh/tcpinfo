@@ -8,7 +8,7 @@ import "github.com/mikioh/tcpopt"
 
 func init() {
 	for _, o := range options {
-		if o.name <= 0 || o.parseFn == nil {
+		if o.name == 0 || o.parseFn == nil {
 			continue
 		}
 		tcpopt.Register(o.level, o.name, o.parseFn)

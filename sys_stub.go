@@ -8,11 +8,7 @@ package tcpinfo
 
 import "github.com/mikioh/tcpopt"
 
-var options = [soMax]option{
-	soInfo:   {ianaProtocolTCP, -1, nil},
-	soCCInfo: {ianaProtocolTCP, -1, nil},
-	soCCAlgo: {ianaProtocolTCP, -1, nil},
-}
+var options [soMax]option
 
 // Marshal implements the Marshal method of tcpopt.Option interface.
 func (i *Info) Marshal() ([]byte, error) { return nil, errOpNoSupport }
