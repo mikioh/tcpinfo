@@ -15,7 +15,7 @@ const (
 	sizeofTCPInfo = 0xec
 )
 
-type sysTCPInfo struct {
+type tcpInfo struct {
 	State                  uint8
 	X__tcpi_ca_state       uint8
 	X__tcpi_retransmits    uint8

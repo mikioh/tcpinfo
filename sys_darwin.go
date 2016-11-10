@@ -61,43 +61,43 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	if len(b) < sizeofTCPConnectionInfo {
 		return nil, errBufferTooShort
 	}
-	sti := (*sysTCPConnectionInfo)(unsafe.Pointer(&b[0]))
-	i := &Info{State: sysStates[sti.State]}
-	if sti.Options&sysTCPCI_OPT_WSCALE != 0 {
-		i.Options = append(i.Options, WindowScale(sti.Snd_wscale))
-		i.PeerOptions = append(i.PeerOptions, WindowScale(sti.Rcv_wscale))
+	tci := (*tcpConnectionInfo)(unsafe.Pointer(&b[0]))
+	i := &Info{State: sysStates[tci.State]}
+	if tci.Options&sysTCPCI_OPT_WSCALE != 0 {
+		i.Options = append(i.Options, WindowScale(tci.Snd_wscale))
+		i.PeerOptions = append(i.PeerOptions, WindowScale(tci.Rcv_wscale))
 	}
-	if sti.Options&sysTCPCI_OPT_SACK != 0 {
+	if tci.Options&sysTCPCI_OPT_SACK != 0 {
 		i.Options = append(i.Options, SACKPermitted(true))
 		i.PeerOptions = append(i.PeerOptions, SACKPermitted(true))
 	}
-	if sti.Options&sysTCPCI_OPT_TIMESTAMPS != 0 {
+	if tci.Options&sysTCPCI_OPT_TIMESTAMPS != 0 {
 		i.Options = append(i.Options, Timestamps(true))
 		i.PeerOptions = append(i.PeerOptions, Timestamps(true))
 	}
-	i.SenderMSS = MaxSegSize(sti.Maxseg)
-	i.ReceiverMSS = MaxSegSize(sti.Maxseg)
-	i.RTT = time.Duration(sti.Rttcur) * time.Millisecond
-	i.RTTVar = time.Duration(sti.Rttvar) * time.Millisecond
-	i.RTO = time.Duration(sti.Rto) * time.Millisecond
+	i.SenderMSS = MaxSegSize(tci.Maxseg)
+	i.ReceiverMSS = MaxSegSize(tci.Maxseg)
+	i.RTT = time.Duration(tci.Rttcur) * time.Millisecond
+	i.RTTVar = time.Duration(tci.Rttvar) * time.Millisecond
+	i.RTO = time.Duration(tci.Rto) * time.Millisecond
 	i.FlowControl = &FlowControl{
-		ReceiverWindow: uint(sti.Rcv_wnd),
+		ReceiverWindow: uint(tci.Rcv_wnd),
 	}
 	i.CongestionControl = &CongestionControl{
-		SenderSSThreshold: uint(sti.Snd_ssthresh),
-		SenderWindowBytes: uint(sti.Snd_cwnd),
+		SenderSSThreshold: uint(tci.Snd_ssthresh),
+		SenderWindowBytes: uint(tci.Snd_cwnd),
 	}
 	i.Sys = &SysInfo{
-		Flags:                   SysFlags(sti.Flags),
-		SenderWindow:            uint(sti.Snd_wnd),
-		SenderInUse:             uint(sti.Snd_sbbytes),
-		SRTT:                    time.Duration(sti.Srtt) * time.Millisecond,
-		SegsSent:                uint64(sti.Txpackets),
-		BytesSent:               uint64(sti.Txbytes),
-		RetransBytes:            uint64(sti.Txretransmitbytes),
-		SegsReceived:            uint64(sti.Rxpackets),
-		BytesReceived:           uint64(sti.Rxbytes),
-		OutOfOrderBytesReceived: uint64(sti.Rxoutoforderbytes),
+		Flags:                   SysFlags(tci.Flags),
+		SenderWindow:            uint(tci.Snd_wnd),
+		SenderInUse:             uint(tci.Snd_sbbytes),
+		SRTT:                    time.Duration(tci.Srtt) * time.Millisecond,
+		SegsSent:                uint64(tci.Txpackets),
+		BytesSent:               uint64(tci.Txbytes),
+		RetransBytes:            uint64(tci.Txretransmitbytes),
+		SegsReceived:            uint64(tci.Rxpackets),
+		BytesReceived:           uint64(tci.Rxbytes),
+		OutOfOrderBytesReceived: uint64(tci.Rxoutoforderbytes),
 	}
 	return i, nil
 }

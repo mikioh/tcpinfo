@@ -39,53 +39,53 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	if len(b) < sizeofTCPInfo {
 		return nil, errBufferTooShort
 	}
-	sti := (*sysTCPInfo)(unsafe.Pointer(&b[0]))
-	i := &Info{State: sysStates[sti.State]}
-	if sti.Options&sysTCPI_OPT_WSCALE != 0 {
-		i.Options = append(i.Options, WindowScale(sti.Pad_cgo_0[0]>>4))
-		i.PeerOptions = append(i.PeerOptions, WindowScale(sti.Pad_cgo_0[0]&0x0f))
+	ti := (*tcpInfo)(unsafe.Pointer(&b[0]))
+	i := &Info{State: sysStates[ti.State]}
+	if ti.Options&sysTCPI_OPT_WSCALE != 0 {
+		i.Options = append(i.Options, WindowScale(ti.Pad_cgo_0[0]>>4))
+		i.PeerOptions = append(i.PeerOptions, WindowScale(ti.Pad_cgo_0[0]&0x0f))
 	}
-	if sti.Options&sysTCPI_OPT_SACK != 0 {
+	if ti.Options&sysTCPI_OPT_SACK != 0 {
 		i.Options = append(i.Options, SACKPermitted(true))
 		i.PeerOptions = append(i.PeerOptions, SACKPermitted(true))
 	}
-	if sti.Options&sysTCPI_OPT_TIMESTAMPS != 0 {
+	if ti.Options&sysTCPI_OPT_TIMESTAMPS != 0 {
 		i.Options = append(i.Options, Timestamps(true))
 		i.PeerOptions = append(i.PeerOptions, Timestamps(true))
 	}
-	i.SenderMSS = MaxSegSize(sti.Snd_mss)
-	i.ReceiverMSS = MaxSegSize(sti.Rcv_mss)
-	i.RTT = time.Duration(sti.Rtt) * time.Microsecond
-	i.RTTVar = time.Duration(sti.Rttvar) * time.Microsecond
-	i.RTO = time.Duration(sti.Rto) * time.Microsecond
-	i.ATO = time.Duration(sti.X__tcpi_ato) * time.Microsecond
-	i.LastDataSent = time.Duration(sti.X__tcpi_last_data_sent) * time.Microsecond
-	i.LastDataReceived = time.Duration(sti.Last_data_recv) * time.Microsecond
-	i.LastAckReceived = time.Duration(sti.X__tcpi_last_ack_recv) * time.Microsecond
+	i.SenderMSS = MaxSegSize(ti.Snd_mss)
+	i.ReceiverMSS = MaxSegSize(ti.Rcv_mss)
+	i.RTT = time.Duration(ti.Rtt) * time.Microsecond
+	i.RTTVar = time.Duration(ti.Rttvar) * time.Microsecond
+	i.RTO = time.Duration(ti.Rto) * time.Microsecond
+	i.ATO = time.Duration(ti.X__tcpi_ato) * time.Microsecond
+	i.LastDataSent = time.Duration(ti.X__tcpi_last_data_sent) * time.Microsecond
+	i.LastDataReceived = time.Duration(ti.Last_data_recv) * time.Microsecond
+	i.LastAckReceived = time.Duration(ti.X__tcpi_last_ack_recv) * time.Microsecond
 	i.FlowControl = &FlowControl{
-		ReceiverWindow: uint(sti.Rcv_space),
+		ReceiverWindow: uint(ti.Rcv_space),
 	}
 	i.CongestionControl = &CongestionControl{
-		SenderSSThreshold:   uint(sti.Snd_ssthresh),
-		ReceiverSSThreshold: uint(sti.X__tcpi_rcv_ssthresh),
+		SenderSSThreshold:   uint(ti.Snd_ssthresh),
+		ReceiverSSThreshold: uint(ti.X__tcpi_rcv_ssthresh),
 	}
 	i.Sys = &SysInfo{
-		NextEgressSeq:     uint(sti.Snd_nxt),
-		NextIngressSeq:    uint(sti.Rcv_nxt),
-		RetransSegs:       uint(sti.Snd_rexmitpack),
-		OutOfOrderSegs:    uint(sti.Rcv_ooopack),
-		ZeroWindowUpdates: uint(sti.Snd_zerowin),
+		NextEgressSeq:     uint(ti.Snd_nxt),
+		NextIngressSeq:    uint(ti.Rcv_nxt),
+		RetransSegs:       uint(ti.Snd_rexmitpack),
+		OutOfOrderSegs:    uint(ti.Rcv_ooopack),
+		ZeroWindowUpdates: uint(ti.Snd_zerowin),
 	}
-	if sti.Options&sysTCPI_OPT_TOE != 0 {
+	if ti.Options&sysTCPI_OPT_TOE != 0 {
 		i.Sys.Offloading = true
 	}
 	switch runtime.GOOS {
 	case "freebsd":
-		i.CongestionControl.SenderWindowBytes = uint(sti.Snd_cwnd)
-		i.Sys.SenderWindowBytes = uint(sti.Snd_wnd)
+		i.CongestionControl.SenderWindowBytes = uint(ti.Snd_cwnd)
+		i.Sys.SenderWindowBytes = uint(ti.Snd_wnd)
 	case "netbsd":
-		i.CongestionControl.SenderWindowSegs = uint(sti.Snd_cwnd)
-		i.Sys.SenderWindowSegs = uint(sti.Snd_wnd)
+		i.CongestionControl.SenderWindowSegs = uint(ti.Snd_cwnd)
+		i.Sys.SenderWindowSegs = uint(ti.Snd_wnd)
 	}
 	return i, nil
 }

@@ -27,7 +27,7 @@ const (
 	sizeofTCPDCTCPInfo = 0x10
 )
 
-type sysTCPInfo struct {
+type tcpInfo struct {
 	State           uint8
 	Ca_state        uint8
 	Retransmits     uint8
@@ -71,16 +71,16 @@ type sysTCPInfo struct {
 	Data_segs_out   uint32
 }
 
-type sysTCPCCInfo [16]byte
+type tcpCCInfo [16]byte
 
-type sysTCPVegasInfo struct {
+type tcpVegasInfo struct {
 	Enabled uint32
 	Rttcnt  uint32
 	Rtt     uint32
 	Minrtt  uint32
 }
 
-type sysTCPDCTCPInfo struct {
+type tcpDCTCPInfo struct {
 	Enabled  uint16
 	Ce_state uint16
 	Alpha    uint32

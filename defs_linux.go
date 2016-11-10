@@ -37,10 +37,10 @@ const (
 	sizeofTCPDCTCPInfo = C.sizeof_struct_tcp_dctcp_info
 )
 
-type sysTCPInfo C.struct_tcp_info
+type tcpInfo C.struct_tcp_info
 
-type sysTCPCCInfo C.union_tcp_cc_info
+type tcpCCInfo C.union_tcp_cc_info
 
-type sysTCPVegasInfo C.struct_tcpvegas_info
+type tcpVegasInfo C.struct_tcpvegas_info
 
-type sysTCPDCTCPInfo C.struct_tcp_dctcp_info
+type tcpDCTCPInfo C.struct_tcp_dctcp_info

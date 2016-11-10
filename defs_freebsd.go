@@ -23,4 +23,4 @@ const (
 	sizeofTCPInfo = C.sizeof_struct_tcp_info
 )
 
-type sysTCPInfo C.struct_tcp_info
+type tcpInfo C.struct_tcp_info

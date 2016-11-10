@@ -25,4 +25,4 @@ const (
 	sizeofTCPConnectionInfo = C.sizeof_struct_tcp_connection_info
 )
 
-type sysTCPConnectionInfo C.struct_tcp_connection_info
+type tcpConnectionInfo C.struct_tcp_connection_info

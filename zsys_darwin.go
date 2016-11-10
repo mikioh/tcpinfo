@@ -17,7 +17,7 @@ const (
 	sizeofTCPConnectionInfo = 0x68
 )
 
-type sysTCPConnectionInfo struct {
+type tcpConnectionInfo struct {
 	State             uint8
 	Snd_wscale        uint8
 	Rcv_wscale        uint8
