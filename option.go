@@ -6,16 +6,12 @@ package tcpinfo
 
 import (
 	"encoding/json"
-	"errors"
 	"time"
 
 	"github.com/mikioh/tcpopt"
 )
 
 var (
-	errOpNoSupport    = errors.New("operation not supported")
-	errBufferTooShort = errors.New("buffer too short")
-
 	_ json.Marshaler = &Info{}
 	_ tcpopt.Option  = &Info{}
 )

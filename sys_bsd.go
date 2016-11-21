@@ -7,6 +7,7 @@
 package tcpinfo
 
 import (
+	"errors"
 	"runtime"
 	"time"
 	"unsafe"
@@ -37,7 +38,7 @@ var sysStates = [11]State{Closed, Listen, SynSent, SynReceived, Established, Clo
 
 func parseInfo(b []byte) (tcpopt.Option, error) {
 	if len(b) < sizeofTCPInfo {
-		return nil, errBufferTooShort
+		return nil, errors.New("short buffer")
 	}
 	ti := (*tcpInfo)(unsafe.Pointer(&b[0]))
 	i := &Info{State: sysStates[ti.State]}
@@ -90,4 +91,6 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 	return i, nil
 }
 
-func parseCCAlgorithmInfo(name string, b []byte) (CCAlgorithmInfo, error) { return nil, errOpNoSupport }
+func parseCCAlgorithmInfo(name string, b []byte) (CCAlgorithmInfo, error) {
+	return nil, errors.New("operation not supported")
+}
