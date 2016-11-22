@@ -5,6 +5,7 @@
 package tcpinfo
 
 import (
+	"errors"
 	"strings"
 	"time"
 	"unsafe"
