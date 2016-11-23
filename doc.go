@@ -7,8 +7,16 @@
 //
 // Example:
 //
-//	import "github.com/mikioh/tcp"
-//	import "github.com/mikioh/tcpinfo"
+//	import (
+//		"github.com/mikioh/tcp"
+//		"github.com/mikioh/tcpinfo"
+//	)
+//
+//	c, err := net.Dial("tcp", "golang.org:80")
+//	if err != nil {
+//		// error handling
+//	}
+//	defer c.Close()
 //
 //	tc, err := tcp.NewConn(c)
 //	if err != nil {
