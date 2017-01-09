@@ -24,7 +24,7 @@ type Info struct {
 	Options           []Option           `json:"opts,omitempty"`      // requesting options
 	PeerOptions       []Option           `json:"peer_opts,omitempty"` // options requested from peer
 	SenderMSS         MaxSegSize         `json:"snd_mss"`             // maximum segment size for sender in bytes
-	ReceiverMSS       MaxSegSize         `json:"rcv_mss"`             // maximum sengment size for receiver in bytes
+	ReceiverMSS       MaxSegSize         `json:"rcv_mss"`             // maximum segment size for receiver in bytes
 	RTT               time.Duration      `json:"rtt"`                 // round-trip time
 	RTTVar            time.Duration      `json:"rttvar"`              // round-trip time variation
 	RTO               time.Duration      `json:"rto"`                 // retransmission timeout

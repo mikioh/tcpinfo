@@ -75,7 +75,7 @@ type Option interface {
 	Kind() OptionKind
 }
 
-// A MaxSegSize represents a maxiumum sengment size option.
+// A MaxSegSize represents a maxiumum segment size option.
 type MaxSegSize uint
 
 // Kind returns an option kind field.
