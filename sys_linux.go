@@ -163,6 +163,19 @@ type DCTCPInfo struct {
 // interface.
 func (di *DCTCPInfo) Algorithm() string { return "dctcp" }
 
+// A BBRInfo represents Bottleneck Bandwidth and Round-trip
+// propagation time-based congestion control information.
+type BBRInfo struct {
+	MaxBW  uint64        `json:"max_bw"`  // maximum-filtered bandwidth
+	MinRTT time.Duration `json:"min_rtt"` // minimum-filtered RTT
+	//PacingGain     uint          `json:"pacing_gain"` // pacing gain
+	//CongWindowGain uint          `json:"cwnd_gain"`   // congestion window gain
+}
+
+// Algorithm implements the Algorithm method of CCAlgorithmInfo
+// interface.
+func (bi *BBRInfo) Algorithm() string { return "bbr" }
+
 func parseCCAlgorithmInfo(name string, b []byte) (CCAlgorithmInfo, error) {
 	if strings.HasPrefix(name, "dctcp") {
 		if len(b) < sizeofTCPDCTCPInfo {
@@ -174,6 +187,16 @@ func parseCCAlgorithmInfo(name string, b []byte) (CCAlgorithmInfo, error) {
 			di.Enabled = true
 		}
 		return di, nil
+	}
+	if strings.HasPrefix(name, "bbr") {
+		if len(b) < sizeofTCPBBRInfo {
+			return nil, errors.New("short buffer")
+		}
+		sbi := (*tcpBBRInfo)(unsafe.Pointer(&b[0]))
+		return &BBRInfo{
+			MaxBW:  uint64(sbi.Bw_hi)<<32 | uint64(sbi.Bw_lo),
+			MinRTT: time.Duration(sbi.Min_rtt) * time.Microsecond,
+		}, nil
 	}
 	if len(b) < sizeofTCPVegasInfo {
 		return nil, errors.New("short buffer")

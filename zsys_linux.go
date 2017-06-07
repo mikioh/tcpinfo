@@ -21,10 +21,11 @@ const (
 	CARecovery CAState = 0x3
 	CALoss     CAState = 0x4
 
-	sizeofTCPInfo      = 0xa0
-	sizeofTCPCCInfo    = 0x10
+	sizeofTCPInfo      = 0xc0
+	sizeofTCPCCInfo    = 0x14
 	sizeofTCPVegasInfo = 0x10
 	sizeofTCPDCTCPInfo = 0x10
+	sizeofTCPBBRInfo   = 0x14
 )
 
 type tcpInfo struct {
@@ -34,7 +35,8 @@ type tcpInfo struct {
 	Probes          uint8
 	Backoff         uint8
 	Options         uint8
-	Pad_cgo_0       [2]byte
+	Pad_cgo_0       [1]byte
+	Pad_cgo_1       [1]byte
 	Rto             uint32
 	Ato             uint32
 	Snd_mss         uint32
@@ -69,9 +71,13 @@ type tcpInfo struct {
 	Min_rtt         uint32
 	Data_segs_in    uint32
 	Data_segs_out   uint32
+	Delivery_rate   uint64
+	Busy_time       uint64
+	Rwnd_limited    uint64
+	Sndbuf_limited  uint64
 }
 
-type tcpCCInfo [16]byte
+type tcpCCInfo [20]byte
 
 type tcpVegasInfo struct {
 	Enabled uint32
@@ -86,4 +92,12 @@ type tcpDCTCPInfo struct {
 	Alpha    uint32
 	Ab_ecn   uint32
 	Ab_tot   uint32
+}
+
+type tcpBBRInfo struct {
+	Bw_lo       uint32
+	Bw_hi       uint32
+	Min_rtt     uint32
+	Pacing_gain uint32
+	Cwnd_gain   uint32
 }

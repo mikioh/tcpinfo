@@ -35,6 +35,7 @@ const (
 	sizeofTCPCCInfo    = C.sizeof_union_tcp_cc_info
 	sizeofTCPVegasInfo = C.sizeof_struct_tcpvegas_info
 	sizeofTCPDCTCPInfo = C.sizeof_struct_tcp_dctcp_info
+	sizeofTCPBBRInfo   = C.sizeof_struct_tcp_bbr_info
 )
 
 type tcpInfo C.struct_tcp_info
@@ -44,3 +45,5 @@ type tcpCCInfo C.union_tcp_cc_info
 type tcpVegasInfo C.struct_tcpvegas_info
 
 type tcpDCTCPInfo C.struct_tcp_dctcp_info
+
+type tcpBBRInfo C.struct_tcp_bbr_info
