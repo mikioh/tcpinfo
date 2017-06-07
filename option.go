@@ -144,7 +144,8 @@ type CCAlgorithmInfo interface {
 	Algorithm() string
 }
 
-// ParseCCAlgorithm parses congestion control algorithm information.
+// ParseCCAlgorithmInfo parses congestion control algorithm
+// information.
 //
 // Only supported on Linux.
 func ParseCCAlgorithmInfo(name string, b []byte) (CCAlgorithmInfo, error) {
