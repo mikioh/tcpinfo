@@ -168,10 +168,10 @@ func (di *DCTCPInfo) Algorithm() string { return "dctcp" }
 // A BBRInfo represents Bottleneck Bandwidth and Round-trip
 // propagation time-based congestion control information.
 type BBRInfo struct {
-	MaxBW  uint64        `json:"max_bw"`  // maximum-filtered bandwidth
-	MinRTT time.Duration `json:"min_rtt"` // minimum-filtered RTT
-	//PacingGain     uint          `json:"pacing_gain"` // pacing gain
-	//CongWindowGain uint          `json:"cwnd_gain"`   // congestion window gain
+	MaxBW          uint64        `json:"max_bw"`      // maximum-filtered bandwidth in bps
+	MinRTT         time.Duration `json:"min_rtt"`     // minimum-filtered round-trip time
+	PacingGain     uint          `json:"pacing_gain"` // pacing gain shifted left 8 bits
+	CongWindowGain uint          `json:"cwnd_gain"`   // congestion window gain shifted left 8 bits
 }
 
 // Algorithm implements the Algorithm method of CCAlgorithmInfo
@@ -196,8 +196,10 @@ func parseCCAlgorithmInfo(name string, b []byte) (CCAlgorithmInfo, error) {
 		}
 		sbi := (*tcpBBRInfo)(unsafe.Pointer(&b[0]))
 		return &BBRInfo{
-			MaxBW:  uint64(sbi.Bw_hi)<<32 | uint64(sbi.Bw_lo),
-			MinRTT: time.Duration(sbi.Min_rtt) * time.Microsecond,
+			MaxBW:          uint64(sbi.Bw_hi)<<32 | uint64(sbi.Bw_lo),
+			MinRTT:         time.Duration(sbi.Min_rtt) * time.Microsecond,
+			PacingGain:     uint(sbi.Pacing_gain),
+			CongWindowGain: uint(sbi.Cwnd_gain),
 		}, nil
 	}
 	if len(b) < sizeofTCPVegasInfo {
