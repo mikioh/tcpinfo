@@ -70,8 +70,10 @@ type SysInfo struct {
 
 var sysStates = [12]State{Unknown, Established, SynSent, SynReceived, FinWait1, FinWait2, TimeWait, Closed, CloseWait, LastAck, Listen, Closing}
 
+const sizeofTCPInfoV4_9 = 0xa0
+
 func parseInfo(b []byte) (tcpopt.Option, error) {
-	if len(b) < sizeofTCPInfo {
+	if len(b) < sizeofTCPInfoV4_9 {
 		return nil, errors.New("short buffer")
 	}
 	ti := (*tcpInfo)(unsafe.Pointer(&b[0]))
