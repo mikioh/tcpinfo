@@ -48,18 +48,21 @@ type SysInfo struct {
 	SenderWindow            uint          `json:"snd_wnd"`        // advertised sender window in bytes
 	SenderInUse             uint          `json:"snd_inuse"`      // bytes in send buffer including inflight data
 	SRTT                    time.Duration `json:"srtt"`           // smoothed round-trip time
-	SegsSent                uint64        `json:"segs_sent"`      // # of segements send
+	SegsSent                uint64        `json:"segs_sent"`      // # of segements sent
 	BytesSent               uint64        `json:"bytes_sent"`     // # of bytes sent
 	RetransBytes            uint64        `json:"retrans_bytes"`  // # of retransmitted bytes
 	SegsReceived            uint64        `json:"segs_rcvd"`      // # of segments received
 	BytesReceived           uint64        `json:"bytes_rcvd"`     // # of bytes received
 	OutOfOrderBytesReceived uint64        `json:"ooo_bytes_rcvd"` // # of our-of-order bytes received
+	RetransSegs             uint64        `json:"retrans_segs"`   // # of retransmitted segments
 }
 
 var sysStates = [11]State{Closed, Listen, SynSent, SynReceived, Established, CloseWait, FinWait1, Closing, LastAck, FinWait2, TimeWait}
 
+const sizeofTCPConnectionInfoV15 = 0x68
+
 func parseInfo(b []byte) (tcpopt.Option, error) {
-	if len(b) < sizeofTCPConnectionInfo {
+	if len(b) < sizeofTCPConnectionInfoV15 {
 		return nil, errors.New("short buffer")
 	}
 	tci := (*tcpConnectionInfo)(unsafe.Pointer(&b[0]))
@@ -99,6 +102,9 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 		SegsReceived:            uint64(tci.Rxpackets),
 		BytesReceived:           uint64(tci.Rxbytes),
 		OutOfOrderBytesReceived: uint64(tci.Rxoutoforderbytes),
+	}
+	if len(b) > sizeofTCPConnectionInfoV15 {
+		i.Sys.RetransSegs = uint64(tci.Txretransmitpackets)
 	}
 	return i, nil
 }
