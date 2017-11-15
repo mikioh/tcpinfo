@@ -14,4 +14,7 @@
 // TCP Options and Maximum Segment Size (MSS) is defined in RFC 6691.
 // Shared Use of Experimental TCP Options is defined in RFC 6994.
 // TCP Extensions for High Performance is defined in RFC 7323.
+//
+// NOTE: Older linux kernels may not support extended tcp statistics
+// described in RFC 4898.
 package tcpinfo
