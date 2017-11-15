@@ -14,34 +14,4 @@
 // TCP Options and Maximum Segment Size (MSS) is defined in RFC 6691.
 // Shared Use of Experimental TCP Options is defined in RFC 6994.
 // TCP Extensions for High Performance is defined in RFC 7323.
-// NOTE: Older linux kernels may not support extended tcp statistics described in RFC 4898
-//
-// Example:
-//
-//	import (
-//		"github.com/mikioh/tcp"
-//		"github.com/mikioh/tcpinfo"
-//	)
-//
-//	c, err := net.Dial("tcp", "golang.org:80")
-//	if err != nil {
-//		// error handling
-//	}
-//	defer c.Close()
-//
-//	tc, err := tcp.NewConn(c)
-//	if err != nil {
-//		// error handling
-//	}
-//	var o tcpinfo.Info
-//	var b [256]byte
-//	i, err := tc.Option(o.Level(), o.Name(), b[:])
-//	if err != nil {
-//		// error handling
-//	}
-//	txt, err := json.Marshal(i)
-//	if err != nil {
-//		// error handling
-//	}
-//	fmt.Println(txt)
 package tcpinfo
