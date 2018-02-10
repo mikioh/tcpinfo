@@ -15,6 +15,6 @@
 // Shared Use of Experimental TCP Options is defined in RFC 6994.
 // TCP Extensions for High Performance is defined in RFC 7323.
 //
-// NOTE: Older linux kernels may not support extended TCP statistics
+// NOTE: Older Linux kernels may not support extended TCP statistics
 // described in RFC 4898.
 package tcpinfo
