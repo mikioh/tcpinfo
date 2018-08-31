@@ -73,6 +73,7 @@ var sysStates = [12]State{Unknown, Established, SynSent, SynReceived, FinWait1, 
 const (
 	sizeofTCPInfoV4_9  = 0xa0
 	sizeofTCPInfoV3_19 = 0x78
+	sizeofTCPInfoV2_6_10 = 0x57
 )
 
 func parseInfo(b []byte) (tcpopt.Option, error) {
@@ -140,7 +141,7 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 
 func parseInfo3_19(b []byte) (tcpopt.Option, error) {
 	if len(b) < sizeofTCPInfoV3_19 {
-		return nil, errors.New("short buffer")
+		return parseInfo2_6_10(b)
 	}
 	ti := (*tcpInfo3_19)(unsafe.Pointer(&b[0]))
 	i := &Info{State: sysStates[ti.State]}
@@ -189,6 +190,60 @@ func parseInfo3_19(b []byte) (tcpopt.Option, error) {
 		ReceiverRTT:             time.Duration(ti.Rcv_rtt) * time.Microsecond,
 		TotalRetransSegs:        uint(ti.Total_retrans),
 		PacingRate:              uint64(ti.Pacing_rate),
+	}
+	return i, nil
+}
+
+func parseInfo2_6_10(b []byte) (tcpopt.Option, error) {
+	if len(b) < sizeofTCPInfoV2_6_10 {
+		return nil, errors.New("short buffer")
+	}
+	ti := (*tcpInfo2_6_10)(unsafe.Pointer(&b[0]))
+	i := &Info{State: sysStates[ti.State]}
+	if ti.Options&sysTCPI_OPT_WSCALE != 0 {
+		i.Options = append(i.Options, WindowScale(ti.Pad_cgo_0[0]>>4))
+		i.PeerOptions = append(i.PeerOptions, WindowScale(ti.Pad_cgo_0[0]&0x0f))
+	}
+	if ti.Options&sysTCPI_OPT_SACK != 0 {
+		i.Options = append(i.Options, SACKPermitted(true))
+		i.PeerOptions = append(i.PeerOptions, SACKPermitted(true))
+	}
+	if ti.Options&sysTCPI_OPT_TIMESTAMPS != 0 {
+		i.Options = append(i.Options, Timestamps(true))
+		i.PeerOptions = append(i.PeerOptions, Timestamps(true))
+	}
+	i.SenderMSS = MaxSegSize(ti.Snd_mss)
+	i.ReceiverMSS = MaxSegSize(ti.Rcv_mss)
+	i.RTT = time.Duration(ti.Rtt) * time.Microsecond
+	i.RTTVar = time.Duration(ti.Rttvar) * time.Microsecond
+	i.RTO = time.Duration(ti.Rto) * time.Microsecond
+	i.ATO = time.Duration(ti.Ato) * time.Microsecond
+	i.LastDataSent = time.Duration(ti.Last_data_sent) * time.Millisecond
+	i.LastDataReceived = time.Duration(ti.Last_data_recv) * time.Millisecond
+	i.LastAckReceived = time.Duration(ti.Last_ack_recv) * time.Millisecond
+	i.FlowControl = &FlowControl{
+		ReceiverWindow: uint(ti.Rcv_space),
+	}
+	i.CongestionControl = &CongestionControl{
+		SenderSSThreshold:   uint(ti.Snd_ssthresh),
+		ReceiverSSThreshold: uint(ti.Rcv_ssthresh),
+		SenderWindowSegs:    uint(ti.Snd_cwnd),
+	}
+	i.Sys = &SysInfo{
+		PathMTU:                 uint(ti.Pmtu),
+		AdvertisedMSS:           MaxSegSize(ti.Advmss),
+		CAState:                 CAState(ti.Ca_state),
+		Retransmissions:         uint(ti.Retransmits),
+		Backoffs:                uint(ti.Backoff),
+		WindowOrKeepAliveProbes: uint(ti.Probes),
+		UnackedSegs:             uint(ti.Unacked),
+		SackedSegs:              uint(ti.Sacked),
+		LostSegs:                uint(ti.Lost),
+		RetransSegs:             uint(ti.Retrans),
+		ForwardAckSegs:          uint(ti.Fackets),
+		ReorderedSegs:           uint(ti.Reordering),
+		ReceiverRTT:             time.Duration(ti.Rcv_rtt) * time.Microsecond,
+		TotalRetransSegs:        uint(ti.Total_retrans),
 	}
 	return i, nil
 }
