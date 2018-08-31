@@ -71,8 +71,8 @@ type SysInfo struct {
 var sysStates = [12]State{Unknown, Established, SynSent, SynReceived, FinWait1, FinWait2, TimeWait, Closed, CloseWait, LastAck, Listen, Closing}
 
 const (
-	sizeofTCPInfoV4_9  = 0xa0
-	sizeofTCPInfoV3_19 = 0x78
+	sizeofTCPInfoV4_9    = 0xa0
+	sizeofTCPInfoV3_19   = 0x78
 	sizeofTCPInfoV2_6_10 = 0x57
 )
 
