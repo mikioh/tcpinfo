@@ -36,7 +36,7 @@ type tcpInfo struct {
 	Backoff         uint8
 	Options         uint8
 	Pad_cgo_0       [1]byte
-	Pad_cgo_1       [1]byte
+	App_limited     byte
 	Rto             uint32
 	Ato             uint32
 	Snd_mss         uint32

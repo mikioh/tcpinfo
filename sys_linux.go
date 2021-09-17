@@ -66,6 +66,12 @@ type SysInfo struct {
 	MinRTT                  time.Duration `json:"min_rtt"`            // current measured minimum RTT; zero means not available
 	DataSegsOut             uint          `json:"data_segs_out"`      // # of segments sent containing a positive length data segment
 	DataSegsIn              uint          `json:"data_segs_in"`       // # of segments received containing a positive length data segment
+	DeliveryRate            uint64        `json:"delivery_rate"`      // # The most recent goodput, as measured by tcp_rate_gen()
+	BusyTime                uint64        `json:"busy_time"`          // # Time (usec) busy sending data
+	RwndLimited             uint64        `json:"rwnd_limited"`       // # Time (usec) limited by receive window
+	SndbufLimited           uint64        `json:"sndbuf_limited"`     // # Time (usec) limited by send buffer
+	AppLimited              bool          `json:"app_limited"`        // A boolean indicating if the goodput was measured when the socket's
+	// throughput was limited by the sending application.
 }
 
 var sysStates = [12]State{Unknown, Established, SynSent, SynReceived, FinWait1, FinWait2, TimeWait, Closed, CloseWait, LastAck, Listen, Closing}
@@ -135,6 +141,11 @@ func parseInfo(b []byte) (tcpopt.Option, error) {
 		MinRTT:                  time.Duration(ti.Min_rtt) * time.Microsecond,
 		DataSegsIn:              uint(ti.Data_segs_in),
 		DataSegsOut:             uint(ti.Data_segs_out),
+		DeliveryRate:            uint64(ti.Delivery_rate),
+		BusyTime:                uint64(ti.Busy_time),
+		RwndLimited:             uint64(ti.Rwnd_limited),
+		SndbufLimited:           uint64(ti.Sndbuf_limited),
+		AppLimited:              ti.App_limited != 0,
 	}
 	return i, nil
 }
